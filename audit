@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Training Audit Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .category {
+            margin-bottom: 10px;
+        }
+        label {
+            display: inline-block;
+            width: 300px;
+        }
+        input {
+            width: 50px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sales Training Audit Scorecard</h1>
+    <p>Rate each element on a scale of 1-5, where 1 is Poor and 5 is Excellent.</p>
+    <div id="categories"></div>
+    <button onclick="calculateScore()">Calculate Score</button>
+    <div id="results"></div>
+
+    <script>
+        const categories = [
+            "Objectives Alignment",
+            "Content Relevance",
+            "Delivery Methods",
+            "Customization",
+            "Reinforcement and Follow-up",
+            "Measurement and Analytics",
+            "Participant Feedback",
+            "ROI Assessment",
+            "Technology Integration",
+            "Competitive Edge",
+            "Soft Skills Development",
+            "Adaptability"
+        ];
+
+        function createInputs() {
+            const categoriesDiv = document.getElementById('categories');
+            categories.forEach(category => {
+                const div = document.createElement('div');
+                div.className = 'category';
+                div.innerHTML = `
+                    <label for="${category}">${category}:</label>
+                    <input type="number" id="${category}" name="${category}" min="1" max="5" required>
+                `;
+                categoriesDiv.appendChild(div);
+            });
+        }
+
+        function calculateScore() {
+            let totalScore = 0;
+            const scores = {};
+            const maxScore = categories.length * 5;
+
+            categories.forEach(category => {
+                const score = parseInt(document.getElementById(category).value);
+                if (isNaN(score) || score < 1 || score > 5) {
+                    alert(`Please enter a valid score (1-5) for ${category}`);
+                    return;
+                }
+                scores[category] = score;
+                totalScore += score;
+            });
+
+            const percentage = (totalScore / maxScore) * 100;
+
+            const strengths = Object.keys(scores).filter(cat => scores[cat] >= 4);
+            const improvements = Object.keys(scores).filter(cat => scores[cat] <= 3);
+
+            let recommendation = '';
+            if (percentage >= 80) {
+                recommendation = 'The sales training program is performing well. Focus on fine-tuning the areas for improvement.';
+            } else if (percentage >= 60) {
+                recommendation = 'The program shows promise but needs significant improvements in the identified areas.';
+            } else {
+                recommendation = 'A major overhaul of the sales training program is recommended. Prioritize addressing the areas for improvement.';
+            }
+
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <h2>Audit Results</h2>
+                <p>Total Score: ${totalScore}/${maxScore}</p>
+                <p>Overall Percentage: ${percentage.toFixed(2)}%</p>
+                <h3>Strengths (scores of 4 or 5):</h3>
+                <ul>${strengths.map(s => `<li>${s}</li>`).join('')}</ul>
+                <h3>Areas for Improvement (scores of 3 or below):</h3>
+                <ul>${improvements.map(i => `<li>${i}</li>`).join('')}</ul>
+                <h3>Recommendation:</h3>
+                <p>${recommendation}</p>
+            `;
+        }
+
+        createInputs();
+    </script>
+</body>
+</html>
